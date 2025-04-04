@@ -141,3 +141,34 @@ def test_error_too_much_points_in_question():
         Question(title="q1", points=101)
     
     assert str(e.value) == 'Points must be between 1 and 100'
+    
+#---
+
+@pytest.fixture
+def question_with_choices():
+    question = Question(title='q1')
+    question.add_choice('a', False)
+    question.add_choice('b', True)
+    question.add_choice('c', False)
+    return question
+
+def test_add_choice_fixture(question_with_choices):
+    question_with_choices.add_choice('d', True)
+    
+    assert len(question_with_choices.choices) == 4
+    assert question_with_choices.choices[2].text == 'c'
+    assert question_with_choices.choices[3].is_correct
+    
+def test_set_correct_fixture(question_with_choices):
+    question_with_choices.set_correct_choices([1, 2])
+    
+    assert len(question_with_choices.choices) == 3
+    assert question_with_choices.choices[0].is_correct
+    assert question_with_choices.choices[1].is_correct
+
+def test_remove_all_fixture(question_with_choices):
+    assert len(question_with_choices.choices) == 3
+    
+    question_with_choices.remove_all_choices()
+    
+    assert len(question_with_choices.choices) == 0
